@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir>
+
+set -e
+set -o pipefail
+
+BIN_DIR=$(cd $(dirname $0); pwd)
+ROOT_DIR=$(dirname $BIN_DIR)
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
+
+DEFAULT_SWIFT_VERSION="3.0"
+CLANG_VERSION=3.7.0
+SWIFT_BUILD_CONFIGURATION="release"
+
+if [ -f "ENV_DIR/SWIFT_BUILD_CONFIGURATION" ]; then
+  SWIFT_BUILD_CONFIGURATION=`cat "$ENV_DIR/SWIFT_BUILD_CONFIGURATION"`
+fi
+
+mkdir -p "$CACHE_DIR"
+
+source "$BIN_DIR/utils"
+source "$BIN_DIR/steps/swiftenv"
+source "$BIN_DIR/steps/swift"
+source "$BIN_DIR/steps/clang"
+source "$BIN_DIR/steps/hooks/pre_compile"
+source "$BIN_DIR/steps/swift-build"
+source "$BIN_DIR/steps/swift-install"
+
+# Setup application environment
+mkdir -p $BUILD_DIR/.profile.d
+
+set-env PATH '$HOME/.swift-bin:$PATH'
+set-env LD_LIBRARY_PATH '$HOME/.swift-lib'
+
+source "$BIN_DIR/steps/hooks/post_compile"

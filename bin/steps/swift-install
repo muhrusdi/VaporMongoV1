@@ -1,0 +1,9 @@
+puts-step "Installing dynamic libraries"
+mkdir -p $BUILD_DIR/.swift-lib
+SWIFT_PREFIX="$(swiftenv prefix)"
+cp $SWIFT_PREFIX/usr/lib/swift/linux/*.so $BUILD_DIR/.swift-lib
+find $BUILD_DIR/.build/$SWIFT_BUILD_CONFIGURATION -name '*.so' -type f -exec cp {} $BUILD_DIR/.swift-lib \;
+
+puts-step "Installing binaries"
+mkdir -p $BUILD_DIR/.swift-bin
+find $BUILD_DIR/.build/$SWIFT_BUILD_CONFIGURATION ! -name '*.so' -type f -perm /a+x -exec cp {} $BUILD_DIR/.swift-bin \;

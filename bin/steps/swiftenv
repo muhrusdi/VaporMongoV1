@@ -1,0 +1,12 @@
+# Fetch swiftenv
+unset GIT_DIR
+git submodule update --init --recursive >/dev/null
+
+# Activate swiftenv
+export SWIFTENV_ROOT="$CACHE_DIR/swiftenv"
+export PATH="$ROOT_DIR/swiftenv/bin:$PATH"
+eval "$(swiftenv init -)"
+
+if ! [ -f "$BUILD_DIR/.swift-version" ] && [ -z "$SWIFT_VERSION" ]; then
+  export SWIFT_VERSION="$DEFAULT_SWIFT_VERSION"
+fi
